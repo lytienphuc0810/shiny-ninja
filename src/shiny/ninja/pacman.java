@@ -1,6 +1,12 @@
-package hcmut.ai.ass.pacman;
+package shiny.ninja;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -21,38 +27,96 @@ public class pacman {
 	 * storing maze 
 	 * TODO
 	 */
-
+  public int[][] maze;
+    
 	public void readInput() {
-		/*
-		  Complete this method to readInput "maze.txt" File, example: 
-		 	%%%%%%%%%
-			%* %....%
-			%%%%%%% %
-			%P      %
-			%.%%.%%.%
-			%.%%...*%
-			%%%%%%%%% 
-			Notes: 	%: means wall,  
-					P: start position of Pacman
-					*: Target
-		 * TODO
-		 */
-	}
+    FileReader f = null;
+    BufferedReader reader = null;
+    try {
+      f = new FileReader("maze.txt");
+    } catch (FileNotFoundException ex) {
+      Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    reader = new BufferedReader(f);
+    int m = 0;
+    int n = 0;
+    
+    while(true){
+      try {
+        String test = reader.readLine();
+        if(test == null)
+          break;
+        if(test.length() > n) 
+          n = test.length();
+        System.out.println(test);
+        m++;
+      } catch (IOException ex) {
+        Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    }
+    
+    System.out.println(m);
+    System.out.println(n);
+
+    maze = new int[m][n];
+    
+    try {
+      reader.close();
+    } catch (IOException ex) {
+      Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    try {
+      f.close();
+    } catch (IOException ex) {
+      Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    try {
+      f = new FileReader("maze.txt");
+    } catch (FileNotFoundException ex) {
+      Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+    }
+
+    reader = new BufferedReader(f);
+
+    for(int i = 0; i < m; i++){
+      String str = null;
+      try {
+        str = reader.readLine();
+      } catch (IOException ex) {
+        Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+      }
+
+      for(int j = 0; j < n; j++) {
+        switch(str.charAt(j)) {
+          case '%':
+            maze[i][j] = 1;
+            System.out.print(maze[i][j]);
+            break;
+          case ' ':
+            maze[i][j] = 2;
+            System.out.print(maze[i][j]);
+            break;
+          case 'P':
+            maze[i][j] = 3;
+            System.out.print(maze[i][j]);
+            break;
+          case '*':
+            maze[i][j] = 4;
+            System.out.print(maze[i][j]);
+            break;
+          default:
+            break;
+        }
+      }
+      System.out.println();
+    }
+  }
 
 	public void generateOutput() {
-		/**
-		 * Write to file "path.txt" the output follow: 
-		 * 	   	u: up, d: down, l: left, r: right, 8 lines
-		 *  		[u, d, l, r] //just notes, not printed: DFS()
-		 * 			[u, d, l, r] //just notes, not printed: BFS()
-		 * 			[u, d, l, r] //just notes, not printed: BestFS()
-		 * 			[u, d, l, r] //just notes, not printed: AStar()
-		 *    		[u, d, l, r] //just notes, not printed: HillClimbing()
-		 * 			[u, d, l, r] //just notes, not printed: SteepestHillClimbing()
-		 * 			[u, d, l, r] //just notes, not printed: SimulatedAnnealing()
-		 * 				   
-		 * TODO
-		 */	
+
 		
 	}
 	
@@ -110,8 +174,8 @@ public class pacman {
 		 */
 		pacman pacman = new pacman();
 		pacman.readInput();
-
-		pacman.generateOutput();
+//
+//		pacman.generateOutput();
 			
 	}
 }
