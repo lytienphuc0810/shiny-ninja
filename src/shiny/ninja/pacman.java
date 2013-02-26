@@ -1,8 +1,10 @@
 package shiny.ninja;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -181,8 +183,31 @@ public class pacman {
   }
 
 	public void generateOutput() {
-    DFS();
-		
+    ArrayList<Character> arr = DFS();
+    FileWriter f = null;
+    BufferedWriter writer = null;
+    try {
+      f = new FileWriter("path.txt");
+      writer = new BufferedWriter(f);
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+      writer.newLine();
+      writer.write("[]",0,2);      
+      writer.newLine();
+      writer.write("[]",0,2);      
+      writer.newLine();
+      writer.write("[]",0,2);      
+      writer.newLine();
+      writer.write("[]",0,2);      
+      writer.newLine();
+      writer.write("[]",0,2);      
+      writer.newLine();
+      writer.write("[]",0,2);
+      writer.flush();
+      writer.close();
+      f.close();
+    } catch (IOException ex) {
+      Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
+    }
 	}
 	
 	/**
@@ -226,21 +251,25 @@ public class pacman {
 		// TODO Auto-generated method stub
 
 	}
-//ArrayList<Character>
-	public void DFS() {//like backtracking
-		if(path.complete()){
-//      return null;
-    }
-    else{
+	public ArrayList<Character> DFS() {//like backtracking
+    ArrayList<Character> arr = new ArrayList<>();
+    subDFS(arr);
+    return arr;
+	}
+  
+  public void subDFS(ArrayList<Character> arr){
+    if(!path.complete()){
       coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y);
       if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1)){
         temp_coordinate.y = temp_coordinate.y + 1;
         path.add_to_path(temp_coordinate.x, temp_coordinate.y);
         System.out.print("u,");
-        DFS();
-        if(!path.complete()) {
+        arr.add('u');
+        subDFS(arr);
+        if(!path.complete()){
           path.add_to_path(temp.x, temp.y);
           System.out.print("d,");
+          arr.add('d');
           temp_coordinate.y = temp_coordinate.y - 1;
         }
       }
@@ -248,10 +277,12 @@ public class pacman {
         temp_coordinate.y = temp_coordinate.y - 1;
         path.add_to_path(temp_coordinate.x, temp_coordinate.y);
         System.out.print("d,");
-        DFS();
-        if(!path.complete()) {
+        arr.add('d');
+        subDFS(arr);
+        if(!path.complete()){
           path.add_to_path(temp.x, temp.y);
           System.out.print("u,");
+          arr.add('u');
           temp_coordinate.y = temp_coordinate.y + 1;
         }
       }
@@ -259,10 +290,12 @@ public class pacman {
         temp_coordinate.x = temp_coordinate.x - 1;
         path.add_to_path(temp_coordinate.x, temp_coordinate.y);
         System.out.print("l,");
-        DFS();
-        if(!path.complete()) {
+        arr.add('l');
+        subDFS(arr);
+        if(!path.complete()){
           path.add_to_path(temp.x, temp.y);
           System.out.print("r,");
+          arr.add('r');
           temp_coordinate.x = temp_coordinate.x + 1;
         }
       }
@@ -270,17 +303,20 @@ public class pacman {
         temp_coordinate.x = temp_coordinate.x + 1;
         path.add_to_path(temp_coordinate.x, temp_coordinate.y);
         System.out.print("r,");
-        DFS();
-        if(!path.complete()) {
+        arr.add('r');
+        subDFS(arr);
+        if(!path.complete()){
           path.add_to_path(temp.x, temp.y);
           System.out.print("l,");
+          arr.add('l');
           temp_coordinate.x = temp_coordinate.x - 1;
         }
       }
-
-//      return null;
+      if(temp_coordinate.x == pacman_coordinate.x && temp_coordinate.y == pacman_coordinate.y && !path.complete()){
+        arr.clear();
+      }
     }
-	}
+  }
 
 	public static void main(String[] args) {
 		/**
