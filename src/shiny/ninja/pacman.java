@@ -23,14 +23,26 @@ import java.util.logging.Logger;
 public class pacman {
 
   public char[][] maze;
+  public int row;
+  public int column;
   public coordinate pacman_coordinate;
   public coordinate temp_coordinate;
   public coordinate target_coordinate;
+  public path path;
+  
+  public pacman(){
+    pacman_coordinate = new coordinate();
+    temp_coordinate   = new coordinate();
+    target_coordinate = new coordinate();
+  }
   
   public class coordinate{
     public int x = 0;
     public int y = 0;
     public coordinate next;
+    public coordinate(){
+      next = null;
+    }
     public coordinate(int x1, int y1){
       x = x1;
       y = y1;
@@ -41,7 +53,10 @@ public class pacman {
   public class path{
     public coordinate head;
     public coordinate tail;
-    
+    public path(){
+      head = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
+      tail = head;
+    }
     public void add_to_path(int x, int y){
       if(head == null){
         head = new coordinate(x, y);
@@ -66,6 +81,15 @@ public class pacman {
       }
       return false;
     }
+    
+    public boolean complete(){
+      if(head == null){
+        return false;
+      }
+      else{
+        return (tail.x == target_coordinate.x && tail.y == target_coordinate.y);
+      }
+    }
   }
   
 	public void readInput() {
@@ -88,10 +112,10 @@ public class pacman {
           break;
         }
         if(test.length() > n){
-          n = test.length();
+          m = test.length();              // so cot, x
         }
         System.out.println(test);
-        m++;
+        n++;                              // so hang, y
       } catch (IOException ex) {
         Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
       }
@@ -122,7 +146,7 @@ public class pacman {
 
     reader = new BufferedReader(f);
 
-    for(int i = m; i > 0; i--){
+    for(int i = n-1; i >= 0; i--){
       String str = null;
       try {
         str = reader.readLine();
@@ -130,30 +154,34 @@ public class pacman {
         Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
       }
 
-      for(int j = 0; j < n; j++) {
+      for(int j = 0; j < m; j++) {
         if(str.charAt(j) == '%' || str.charAt(j) == ' ' || str.charAt(j) == 'P' || str.charAt(j) == '*') {
-          maze[i][j] = str.charAt(j);
-          System.out.print(maze[i][j]);
+          maze[j][i] = str.charAt(j);
+          System.out.print(maze[j][i]);
         }
         
         if(str.charAt(j) == 'P'){
-          pacman_coordinate.x = i;
-          pacman_coordinate.y = j;
-          temp_coordinate.x = i;
-          temp_coordinate.y = j;
+          pacman_coordinate.x = j;
+          pacman_coordinate.y = i;
+          temp_coordinate.x = j;
+          temp_coordinate.y = i;
+          path = new path();
         }
         
         if(str.charAt(j) == '*'){
-          target_coordinate.x = i;
-          target_coordinate.y = j;
+          target_coordinate.x = j;
+          target_coordinate.y = i;
         }
       }
       System.out.println();
     }
+    
+    row = n;
+    column = m;
   }
 
 	public void generateOutput() {
-
+    DFS();
 		
 	}
 	
@@ -198,13 +226,59 @@ public class pacman {
 		// TODO Auto-generated method stub
 
 	}
-
-	public ArrayList<Character> DFS() {//like backtracking
-		if(temp_coordinate.x == target_coordinate.x && temp_coordinate.y == target_coordinate.y){
-      return null;
+//ArrayList<Character>
+	public void DFS() {//like backtracking
+		if(path.complete()){
+//      return null;
     }
     else{
-      
+      coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y);
+      if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1)){
+        temp_coordinate.y = temp_coordinate.y + 1;
+        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+        System.out.print("u,");
+        DFS();
+        if(!path.complete()) {
+          path.add_to_path(temp.x, temp.y);
+          System.out.print("d,");
+          temp_coordinate.y = temp_coordinate.y - 1;
+        }
+      }
+      if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
+        temp_coordinate.y = temp_coordinate.y - 1;
+        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+        System.out.print("d,");
+        DFS();
+        if(!path.complete()) {
+          path.add_to_path(temp.x, temp.y);
+          System.out.print("u,");
+          temp_coordinate.y = temp_coordinate.y + 1;
+        }
+      }
+      if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
+        temp_coordinate.x = temp_coordinate.x - 1;
+        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+        System.out.print("l,");
+        DFS();
+        if(!path.complete()) {
+          path.add_to_path(temp.x, temp.y);
+          System.out.print("r,");
+          temp_coordinate.x = temp_coordinate.x + 1;
+        }
+      }
+      if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
+        temp_coordinate.x = temp_coordinate.x + 1;
+        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+        System.out.print("r,");
+        DFS();
+        if(!path.complete()) {
+          path.add_to_path(temp.x, temp.y);
+          System.out.print("l,");
+          temp_coordinate.x = temp_coordinate.x - 1;
+        }
+      }
+
+//      return null;
     }
 	}
 
@@ -215,7 +289,7 @@ public class pacman {
 		pacman pacman = new pacman();
 		pacman.readInput();
 //
-//		pacman.generateOutput();
+		pacman.generateOutput();
 			
 	}
 }
