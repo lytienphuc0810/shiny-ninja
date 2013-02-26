@@ -258,63 +258,53 @@ public class pacman {
 	}
   
   public void subDFS(ArrayList<Character> arr){
-    if(!path.complete()){
-      coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y);
-      if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1)){
-        temp_coordinate.y = temp_coordinate.y + 1;
-        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-        System.out.print("u,");
-        arr.add('u');
-        subDFS(arr);
-        if(!path.complete()){
-          path.add_to_path(temp.x, temp.y);
-          System.out.print("d,");
-          arr.add('d');
-          temp_coordinate.y = temp_coordinate.y - 1;
-        }
-      }
-      if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
-        temp_coordinate.y = temp_coordinate.y - 1;
-        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-        System.out.print("d,");
+    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y);
+    if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1) && !path.complete()){
+      temp_coordinate.y = temp_coordinate.y + 1;
+      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+      arr.add('u');
+      subDFS(arr);
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y);
         arr.add('d');
-        subDFS(arr);
-        if(!path.complete()){
-          path.add_to_path(temp.x, temp.y);
-          System.out.print("u,");
-          arr.add('u');
-          temp_coordinate.y = temp_coordinate.y + 1;
-        }
+        temp_coordinate.y = temp_coordinate.y - 1;
       }
-      if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
-        temp_coordinate.x = temp_coordinate.x - 1;
-        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-        System.out.print("l,");
-        arr.add('l');
-        subDFS(arr);
-        if(!path.complete()){
-          path.add_to_path(temp.x, temp.y);
-          System.out.print("r,");
-          arr.add('r');
-          temp_coordinate.x = temp_coordinate.x + 1;
-        }
+    }
+    if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
+      temp_coordinate.y = temp_coordinate.y - 1;
+      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+      arr.add('d');
+      subDFS(arr);
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y);
+        arr.add('u');
+        temp_coordinate.y = temp_coordinate.y + 1;
       }
-      if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
-        temp_coordinate.x = temp_coordinate.x + 1;
-        path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-        System.out.print("r,");
+    }
+    if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
+      temp_coordinate.x = temp_coordinate.x - 1;
+      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+      arr.add('l');
+      subDFS(arr);
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y);
         arr.add('r');
-        subDFS(arr);
-        if(!path.complete()){
-          path.add_to_path(temp.x, temp.y);
-          System.out.print("l,");
-          arr.add('l');
-          temp_coordinate.x = temp_coordinate.x - 1;
-        }
+        temp_coordinate.x = temp_coordinate.x + 1;
       }
-      if(temp_coordinate.x == pacman_coordinate.x && temp_coordinate.y == pacman_coordinate.y && !path.complete()){
-        arr.clear();
+    }
+    if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
+      temp_coordinate.x = temp_coordinate.x + 1;
+      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
+      arr.add('r');
+      subDFS(arr);
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y);
+        arr.add('l');
+        temp_coordinate.x = temp_coordinate.x - 1;
       }
+    }
+    if(temp_coordinate.x == pacman_coordinate.x && temp_coordinate.y == pacman_coordinate.y && !path.complete()){
+      arr.clear();
     }
   }
 
