@@ -22,13 +22,26 @@ import java.util.logging.Logger;
 
 public class pacman {
 
-	/**
-	 * Some Global Variable you may use declare here! For example variable for
-	 * storing maze 
-	 * TODO
-	 */
-  public int[][] maze;
-    
+  public char[][] maze;
+  public coordinate pacman_coordinate;
+  public coordinate temp_coordinate;
+  public coordinate target_coordinate;
+  
+  public class coordinate {
+    public int x = 0;
+    public int y = 0;
+  }
+  
+  public class coordinate_node{
+    public coordinate current;
+    public coordinate next;
+  }
+  
+  public class path{
+    public coordinate_node head;
+    public coordinate_node tail;
+  }
+  
 	public void readInput() {
     FileReader f = null;
     BufferedReader reader = null;
@@ -45,10 +58,12 @@ public class pacman {
     while(true){
       try {
         String test = reader.readLine();
-        if(test == null)
+        if(test == null){
           break;
-        if(test.length() > n) 
+        }
+        if(test.length() > n){
           n = test.length();
+        }
         System.out.println(test);
         m++;
       } catch (IOException ex) {
@@ -59,7 +74,7 @@ public class pacman {
     System.out.println(m);
     System.out.println(n);
 
-    maze = new int[m][n];
+    maze = new char[m][n];
     
     try {
       reader.close();
@@ -81,7 +96,7 @@ public class pacman {
 
     reader = new BufferedReader(f);
 
-    for(int i = 0; i < m; i++){
+    for(int i = m; i > 0; i--){
       String str = null;
       try {
         str = reader.readLine();
@@ -90,25 +105,21 @@ public class pacman {
       }
 
       for(int j = 0; j < n; j++) {
-        switch(str.charAt(j)) {
-          case '%':
-            maze[i][j] = 1;
-            System.out.print(maze[i][j]);
-            break;
-          case ' ':
-            maze[i][j] = 2;
-            System.out.print(maze[i][j]);
-            break;
-          case 'P':
-            maze[i][j] = 3;
-            System.out.print(maze[i][j]);
-            break;
-          case '*':
-            maze[i][j] = 4;
-            System.out.print(maze[i][j]);
-            break;
-          default:
-            break;
+        if(str.charAt(j) == '%' || str.charAt(j) == ' ' || str.charAt(j) == 'P' || str.charAt(j) == '*') {
+          maze[i][j] = str.charAt(j);
+          System.out.print(maze[i][j]);
+        }
+        
+        if(str.charAt(j) == 'P'){
+          pacman_coordinate.x = i;
+          pacman_coordinate.y = j;
+          temp_coordinate.x = i;
+          temp_coordinate.y = j;
+        }
+        
+        if(str.charAt(j) == '*'){
+          target_coordinate.x = i;
+          target_coordinate.y = j;
         }
       }
       System.out.println();
@@ -163,9 +174,12 @@ public class pacman {
 	}
 
 	public ArrayList<Character> DFS() {//like backtracking
-		return null;
-		// TODO Auto-generated method stub
-
+		if(temp_coordinate.x == target_coordinate.x && temp_coordinate.y == target_coordinate.y){
+      return null;
+    }
+    else{
+      
+    }
 	}
 
 	public static void main(String[] args) {
