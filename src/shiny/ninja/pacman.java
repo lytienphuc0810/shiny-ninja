@@ -27,19 +27,45 @@ public class pacman {
   public coordinate temp_coordinate;
   public coordinate target_coordinate;
   
-  public class coordinate {
+  public class coordinate{
     public int x = 0;
     public int y = 0;
-  }
-  
-  public class coordinate_node{
-    public coordinate current;
     public coordinate next;
+    public coordinate(int x1, int y1){
+      x = x1;
+      y = y1;
+      next = null;
+    }
   }
   
   public class path{
-    public coordinate_node head;
-    public coordinate_node tail;
+    public coordinate head;
+    public coordinate tail;
+    
+    public void add_to_path(int x, int y){
+      if(head == null){
+        head = new coordinate(x, y);
+        tail = head;
+      }
+      else{
+        coordinate temp = tail;
+        tail = new coordinate(x,y);
+        temp.next = tail;
+      }
+    }
+    
+    public boolean contain(int x, int y){
+      coordinate temp = head;
+      while(temp != null){
+        if(temp.x == x && temp.y == y){
+          return true;
+        }
+        else{
+          temp = temp.next;
+        }
+      }
+      return false;
+    }
   }
   
 	public void readInput() {
