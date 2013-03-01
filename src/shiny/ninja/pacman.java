@@ -37,18 +37,59 @@ public class pacman {
     temp_coordinate   = new coordinate();
     target_coordinate = new coordinate();
   }
+
+  public boolean adjacent(coordinate slot1, coordinate slot2){
+    return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
+  }
+  
+  public path gettruepath(path path) {
+    path truepath = new path();
+    
+    if(path.tail.x == target_coordinate.x  && path.tail.y == target_coordinate.y){
+      coordinate temp;
+      coordinate temp2 = path.tail;
+      truepath.add_to_path_reverse(path.tail.x, path.tail.y);
+              
+      while(true){
+        temp = path.head;
+        while(true){
+          if(adjacent(temp, temp2)){
+            break;
+          }
+          temp = temp.next;
+        }
+        truepath.add_to_path_reverse(temp.x, temp.y);
+        temp2 = temp;
+        if(temp2.x == path.head.x && temp2.y == path.head.y){
+          break;
+        }
+      }
+    }
+    
+    return truepath;
+  }
   
   public class coordinate{
     public int x = 0;
     public int y = 0;
+    public coordinate previous_direction;
     public coordinate next;
+    
     public coordinate(){
+      previous_direction = null;
       next = null;
-    }
+    }   
+
     public coordinate(int x1, int y1){
       x = x1;
       y = y1;
       next = null;
+    }
+    public coordinate(int x1, int y1, coordinate direction){
+      x = x1;
+      y = y1;
+      next = null;
+      previous_direction = direction;
     }
   }
   
@@ -56,8 +97,8 @@ public class pacman {
     public coordinate head;
     public coordinate tail;
     public path(){
-      head = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
-      tail = head;
+      head = null;
+      tail = null;
     }
     public void add_to_path(int x, int y){
       if(head == null){
@@ -69,8 +110,18 @@ public class pacman {
         tail = new coordinate(x,y);
         temp.next = tail;
       }
+    }    
+    public void add_to_path_reverse(int x, int y){
+      if(head == null){
+        head = new coordinate(x, y);
+        tail = head;
+      }
+      else{
+        coordinate temp = head;
+        head = new coordinate(x,y);
+        head.next = temp;
+      }
     }
-    
     public boolean contain(int x, int y){
       coordinate temp = head;
       while(temp != null){
@@ -245,66 +296,121 @@ public class pacman {
 		// TODO Auto-generated method stub
 
 	}
+  
+  public char awayback(char chr){
+    switch(chr){
+      case 'u':
+        return 'd';
+      case 'd':
+        return 'u';
+      case 'l':
+        return 'r';
+      case 'r':
+        return 'l';
+      default:
+        return 'n';
+    }
+  }
+  
+  public ArrayList<Character> getdirection(path somepath){
+    ArrayList<Character> arr = new ArrayList();
+    coordinate temp = somepath.head;
+    
+    if(somepath.complete()){
+      while(temp != null && temp.next != null){
+        if(adjacent(temp, temp.next)){
+          if(temp.y - temp.next.y == 1){
+            arr.add('d');
+          }
+          if(temp.y - temp.next.y == -1){
+            arr.add('u');
+          }
+          if(temp.x - temp.next.x == 1){
+            arr.add('l');
+          }
+          if(temp.x - temp.next.x == -1){
+            arr.add('r');
+          }
+        }
+        else{
+          arr.add('e');
+        }
+        temp = temp.next;
+      }
+    }
+    return arr;
+  }
 
 	public ArrayList<Character> BFS() {//find best solution
-		return null;
-		// TODO Auto-generated method stub
+    ArrayList<coordinate> queue = new ArrayList();
+    
+    path.head = null;
+    path.tail = null;
+    
+    queue.add(temp_coordinate);
+    
+    while(true){
+      // get tail from path and add to queue all of its child
+      coordinate temp = queue.get(0);
+      queue.remove(0);
 
-	}
-	public ArrayList<Character> DFS() {//like backtracking
-    ArrayList<Character> arr = new ArrayList<>();
-    subDFS(arr);
-    return arr;
+      path.add_to_path(temp.x, temp.y);
+      
+      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
+        queue.add(new coordinate(temp.x, temp.y + 1, temp));
+      }
+      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
+        queue.add(new coordinate(temp.x, temp.y - 1, temp));
+      }
+      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
+        queue.add(new coordinate(temp.x - 1, temp.y, temp));
+      } 
+      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
+        queue.add(new coordinate(temp.x + 1, temp.y, temp));
+      }
+      
+      if(queue.isEmpty() || path.complete()){
+        break;
+      }
+    }
+    
+    path true_path = gettruepath(path);
+    
+    return getdirection(true_path);
 	}
   
-  public void subDFS(ArrayList<Character> arr){
-    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y);
+	public ArrayList<Character> DFS() {//like backtracking
+    ArrayList<Character> arr = new ArrayList<>();
+    path.add_to_path(pacman_coordinate.x, pacman_coordinate.y);
+    subDFS();
+    path truepath = gettruepath(path);
+    return getdirection(truepath);
+	}
+  
+  public void subDFS(){
     if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1) && !path.complete()){
-      temp_coordinate.y = temp_coordinate.y + 1;
+      temp_coordinate.y++;
       path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-      arr.add('u');
-      subDFS(arr);
-      if(!path.complete()){
-        path.add_to_path(temp.x, temp.y);
-        arr.add('d');
-        temp_coordinate.y = temp_coordinate.y - 1;
-      }
+      subDFS();
+      temp_coordinate.y--; 
     }
     if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
-      temp_coordinate.y = temp_coordinate.y - 1;
+      temp_coordinate.y--;
       path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-      arr.add('d');
-      subDFS(arr);
-      if(!path.complete()){
-        path.add_to_path(temp.x, temp.y);
-        arr.add('u');
-        temp_coordinate.y = temp_coordinate.y + 1;
-      }
+      subDFS();
+      temp_coordinate.y++;
     }
     if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
-      temp_coordinate.x = temp_coordinate.x - 1;
+      temp_coordinate.x--;
       path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-      arr.add('l');
-      subDFS(arr);
-      if(!path.complete()){
-        path.add_to_path(temp.x, temp.y);
-        arr.add('r');
-        temp_coordinate.x = temp_coordinate.x + 1;
-      }
+      subDFS();
+      temp_coordinate.x++;
     }
     if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
-      temp_coordinate.x = temp_coordinate.x + 1;
+      temp_coordinate.x++;
       path.add_to_path(temp_coordinate.x, temp_coordinate.y);
-      arr.add('r');
-      subDFS(arr);
-      if(!path.complete()){
-        path.add_to_path(temp.x, temp.y);
-        arr.add('l');
-        temp_coordinate.x = temp_coordinate.x - 1;
-      }
-    }
-    if(temp_coordinate.x == pacman_coordinate.x && temp_coordinate.y == pacman_coordinate.y && !path.complete()){
-      arr.clear();
+      subDFS();      
+      temp_coordinate.x--;
     }
   }
 
