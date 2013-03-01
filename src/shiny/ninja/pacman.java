@@ -38,45 +38,13 @@ public class pacman {
     target_coordinate = new coordinate();
   }
 
-  public boolean adjacent(coordinate slot1, coordinate slot2){
-    return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
-  }
-  
-  public path gettruepath(path path) {
-    path truepath = new path();
-    
-    if(path.tail.x == target_coordinate.x  && path.tail.y == target_coordinate.y){
-      coordinate temp;
-      coordinate temp2 = path.tail;
-      truepath.add_to_path_reverse(path.tail.x, path.tail.y);
-              
-      while(true){
-        temp = path.head;
-        while(true){
-          if(adjacent(temp, temp2)){
-            break;
-          }
-          temp = temp.next;
-        }
-        truepath.add_to_path_reverse(temp.x, temp.y);
-        temp2 = temp;
-        if(temp2.x == path.head.x && temp2.y == path.head.y){
-          break;
-        }
-      }
-    }
-    
-    return truepath;
-  }
-  
+
   public class coordinate{
     public int x = 0;
     public int y = 0;
-    public coordinate previous_direction;
     public coordinate next;
     
     public coordinate(){
-      previous_direction = null;
       next = null;
     }   
 
@@ -85,20 +53,16 @@ public class pacman {
       y = y1;
       next = null;
     }
-    public coordinate(int x1, int y1, coordinate direction){
-      x = x1;
-      y = y1;
-      next = null;
-      previous_direction = direction;
-    }
   }
   
   public class path{
     public coordinate head;
     public coordinate tail;
+    public int count;
     public path(){
       head = null;
       tail = null;
+      count = 0;
     }
     public void add_to_path(int x, int y){
       if(head == null){
@@ -110,6 +74,7 @@ public class pacman {
         tail = new coordinate(x,y);
         temp.next = tail;
       }
+      count++;
     }    
     public void add_to_path_reverse(int x, int y){
       if(head == null){
@@ -121,6 +86,7 @@ public class pacman {
         head = new coordinate(x,y);
         head.next = temp;
       }
+      count++;
     }
     public boolean contain(int x, int y){
       coordinate temp = head;
@@ -218,7 +184,6 @@ public class pacman {
           pacman_coordinate.y = i;
           temp_coordinate.x = j;
           temp_coordinate.y = i;
-          path = new path();
         }
         
         if(str.charAt(j) == '*'){
@@ -234,15 +199,17 @@ public class pacman {
   }
 
 	public void generateOutput() {
-    ArrayList<Character> arr = DFS();
+    ArrayList<Character> arr = null;
     FileWriter f = null;
     BufferedWriter writer = null;
     try {
       f = new FileWriter("path.txt");
       writer = new BufferedWriter(f);
+      arr = DFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
-      writer.write("[]",0,2);      
+      arr = BFS();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
       writer.write("[]",0,2);      
       writer.newLine();
@@ -260,42 +227,49 @@ public class pacman {
       Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
     }
 	}
-	
-	/**
-	 * Remember NOT to change the PROTOTYPE of the following methods
-	 * 
-	 */
-	
-	
-	public ArrayList<Character> HillClimbing() {
-		return null;
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public ArrayList<Character> SimulatedAnnealing() {
-		return null;
-		// TODO Auto-generated method stub
-		
-	}
 
-	public ArrayList<Character> SteepestHillClimbing() {
-		return null;
-		// TODO Auto-generated method stub
-		
-	}	
+  public boolean adjacent(coordinate slot1, coordinate slot2){
+    return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
+  }
+  
+  public path gettruepath(path path) {
+    path truepath = new path();
+    
+    if(path.tail.x == target_coordinate.x  && path.tail.y == target_coordinate.y){
+      coordinate temp;
+      coordinate temp2 = path.tail;
+      truepath.add_to_path_reverse(path.tail.x, path.tail.y);
+              
+      while(true){
+        temp = path.head;
+        while(true){
+          if(adjacent(temp, temp2)){
+            break;
+          }
+          temp = temp.next;
+        }
+        truepath.add_to_path_reverse(temp.x, temp.y);
+        temp2 = temp;
+        if(temp2.x == path.head.x && temp2.y == path.head.y){
+          break;
+        }
+      }
+    }
+    
+    return truepath;
+  }
 
-	public ArrayList<Character> AStar() {
-		return null;
-		// TODO Auto-generated method stub
-
-	}
-
-	public ArrayList<Character> BestFS() {
-		return null;
-		// TODO Auto-generated method stub
-
-	}
+  public boolean notinqueue(ArrayList<coordinate> queue, int x, int y) {
+    int n = queue.size();
+    for(int i = 0; i < n; i++){
+      coordinate temp = queue.get(i);
+      if(temp.x == x && temp.y == y){
+        return false;
+      }
+    }
+    return true;
+  }
+  
   
   public char awayback(char chr){
     switch(chr){
@@ -340,48 +314,77 @@ public class pacman {
     }
     return arr;
   }
+	
+	public ArrayList<Character> HillClimbing() {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public ArrayList<Character> SimulatedAnnealing() {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
 
+	public ArrayList<Character> SteepestHillClimbing() {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}	
+
+	public ArrayList<Character> AStar() {
+		return null;
+		// TODO Auto-generated method stub
+
+	}
+
+	public ArrayList<Character> BestFS() {
+		return null;
+		// TODO Auto-generated method stub
+
+	}
+  
 	public ArrayList<Character> BFS() {//find best solution
+    path = new path();
+    
     ArrayList<coordinate> queue = new ArrayList();
-    
-    path.head = null;
-    path.tail = null;
-    
-    queue.add(temp_coordinate);
+    queue.add(new coordinate(temp_coordinate.x, temp_coordinate.y));
     
     while(true){
-      // get tail from path and add to queue all of its child
       coordinate temp = queue.get(0);
       queue.remove(0);
 
       path.add_to_path(temp.x, temp.y);
       
-      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
-        queue.add(new coordinate(temp.x, temp.y + 1, temp));
+      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && notinqueue(queue, temp.x, temp.y+1) && !path.complete()){
+        queue.add(new coordinate(temp.x, temp.y + 1));
       }
-      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
-        queue.add(new coordinate(temp.x, temp.y - 1, temp));
+      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && notinqueue(queue, temp.x, temp.y-1) && !path.complete()){
+        queue.add(new coordinate(temp.x, temp.y - 1));
       }
-      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
-        queue.add(new coordinate(temp.x - 1, temp.y, temp));
+      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && notinqueue(queue, temp.x-1, temp.y) && !path.complete()){
+        queue.add(new coordinate(temp.x - 1, temp.y));
       } 
-      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
-        queue.add(new coordinate(temp.x + 1, temp.y, temp));
+      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && notinqueue(queue, temp.x+1, temp.y) && !path.complete()){
+        queue.add(new coordinate(temp.x + 1, temp.y));
       }
       
       if(queue.isEmpty() || path.complete()){
         break;
       }
     }
-    
+    System.out.println("BFS the number of slots travelled: " + path.count);
     path true_path = gettruepath(path);
     
     return getdirection(true_path);
 	}
   
 	public ArrayList<Character> DFS() {//like backtracking
+    path = new path();
     ArrayList<Character> arr = new ArrayList<>();
     subDFS();
+    System.out.println("DFS the number of slots travelled: " + path.count);
     path truepath = gettruepath(path);
     return getdirection(truepath);
 	}
