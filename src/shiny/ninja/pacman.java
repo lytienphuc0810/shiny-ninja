@@ -381,34 +381,30 @@ public class pacman {
   
 	public ArrayList<Character> DFS() {//like backtracking
     ArrayList<Character> arr = new ArrayList<>();
-    path.add_to_path(pacman_coordinate.x, pacman_coordinate.y);
     subDFS();
     path truepath = gettruepath(path);
     return getdirection(truepath);
 	}
   
   public void subDFS(){
+    path.add_to_path(temp_coordinate.x, temp_coordinate.y);
     if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1) && !path.complete()){
       temp_coordinate.y++;
-      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
       subDFS();
       temp_coordinate.y--; 
     }
     if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
       temp_coordinate.y--;
-      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
       subDFS();
       temp_coordinate.y++;
     }
     if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
       temp_coordinate.x--;
-      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
       subDFS();
       temp_coordinate.x++;
     }
     if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
       temp_coordinate.x++;
-      path.add_to_path(temp_coordinate.x, temp_coordinate.y);
       subDFS();      
       temp_coordinate.x--;
     }
