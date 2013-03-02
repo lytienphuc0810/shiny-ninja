@@ -38,6 +38,16 @@ public class pacman {
     target_coordinate = new coordinate();
   }
 
+  private coordinate getfrom(ArrayList<coordinate> set, int x, int y) {
+    int n = set.size();
+    for(int i = 0; i < n; i++){
+      if(set.get(i).x == x && set.get(i).y == y){
+        return set.get(i);
+      }
+    }
+    return null;
+  }
+
   public class coordinate{
     public int x = 0;
     public int y = 0;
@@ -130,6 +140,19 @@ public class pacman {
         }
       }
       return false;
+    }
+    
+    public coordinate get_coordinate(int x, int y){
+      coordinate temp = head;
+      while(temp != null){
+        if(temp.x == x && temp.y == y){
+          break;
+        }
+        else{
+          temp = temp.next;
+        }
+      }
+      return temp;
     }
     
     public boolean complete(){
@@ -388,25 +411,45 @@ public class pacman {
       temp = set.get(i);
       set.remove(i);
       
-      if(path.tail != null && adjacent(temp, path.tail)){
-        temp.parent = path.tail;
+      if(temp.x == 4 && temp.y == 4){
+        int asd =123;  // trong set !!!!
       }
       
+      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
+        if(notin(set, temp.x, temp.y+1)){
+          set.add(new coordinate(temp.x, temp.y + 1, temp));
+        }
+        else{
+          getfrom(set, temp.x, temp.y + 1).parent = temp;
+        }
+      }
+      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
+        if(notin(set, temp.x, temp.y-1)){
+          set.add(new coordinate(temp.x, temp.y - 1, temp));
+        }
+        else{
+          getfrom(set, temp.x, temp.y - 1).parent = temp;
+        }
+      }
+      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
+        if(notin(set, temp.x-1, temp.y)){
+          set.add(new coordinate(temp.x - 1, temp.y, temp));
+        }
+        else{
+          getfrom(set, temp.x - 1, temp.y).parent = temp;
+        }
+      } 
+      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
+        if(notin(set, temp.x+1, temp.y)){
+          set.add(new coordinate(temp.x + 1, temp.y, temp));
+        }
+        else{
+          getfrom(set, temp.x + 1, temp.y).parent = temp;
+        }
+      }
+
       path.add_to_path(temp);
       System.out.println("(" + temp.x + ", " + temp.y + ")");
-      
-      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && notin(set, temp.x, temp.y+1) && !path.complete()){
-        set.add(new coordinate(temp.x, temp.y + 1, temp));
-      }
-      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && notin(set, temp.x, temp.y-1) && !path.complete()){
-        set.add(new coordinate(temp.x, temp.y - 1, temp));
-      }
-      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && notin(set, temp.x-1, temp.y) && !path.complete()){
-        set.add(new coordinate(temp.x - 1, temp.y, temp));
-      } 
-      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && notin(set, temp.x+1, temp.y) && !path.complete()){
-        set.add(new coordinate(temp.x + 1, temp.y, temp));
-      }
       
       if(set.isEmpty() || path.complete()){
         break;
