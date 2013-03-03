@@ -271,26 +271,26 @@ public class pacman {
     try {
       f = new FileWriter("path.txt");
       writer = new BufferedWriter(f);
+      // myoutput
+      arr = DFS();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+      writer.newLine();
+      writer.flush();
       
-//      arr = DFS();
-//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
-//      writer.newLine();
-//      writer.flush();
-//      
-//      arr = BFS();
-//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
-//      writer.newLine();
-//      writer.flush();
-//      
-//      arr = BestFS();
-//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
-//      writer.newLine();
-//      writer.flush();
-//
-//      arr = AStar();
-//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
-//      writer.newLine();    
-//      writer.flush();
+      arr = BFS();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+      writer.newLine();
+      writer.flush();
+      
+      arr = BestFS();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
+      writer.newLine();
+      writer.flush();
+
+      arr = AStar();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
+      writer.newLine();    
+      writer.flush();
 
       arr = HillClimbing();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
@@ -312,6 +312,7 @@ public class pacman {
     return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
   }
   
+  // di tu target len, chi lay 1 duong di den dich, bo qua cac duong cut
   public path gettruepath(path path) {
     path truepath = new path();
     coordinate temp;
@@ -730,8 +731,7 @@ public class pacman {
     path = new path();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
-    path truepath = gettruepath(path);
-    return getdirection(truepath);
+    return getdirection(gettruepath(path));
 	}
   
   public void subDFS(coordinate parent){
