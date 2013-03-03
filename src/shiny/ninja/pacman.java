@@ -44,6 +44,7 @@ public class pacman {
     public int x = 0;
     public int y = 0;
     public int g_weight;
+    public int h_weight;
     public coordinate next;
     public coordinate parent;
     
@@ -66,12 +67,18 @@ public class pacman {
       parent = parent1;
       g_weight = 0;
     }
-    public coordinate(int x1, int y1, coordinate parent1, int g){
+    
+    public coordinate(int x1, int y1, coordinate parent1, int n, String searchType){
       x = x1;
       y = y1;
       next = null;
       parent = parent1;
-      g_weight = g;
+      if(searchType.equals("AStar")){
+        g_weight = n;
+      }
+      else{
+        h_weight = n;
+      }
     }
   }
   
@@ -264,20 +271,32 @@ public class pacman {
     try {
       f = new FileWriter("path.txt");
       writer = new BufferedWriter(f);
+      
       arr = DFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
+      writer.flush();
+      
       arr = BFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
+      writer.flush();
+      
       arr = BestFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
       writer.newLine();
+      writer.flush();
+
       arr = AStar();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
+      writer.newLine();    
+      writer.flush();
+
+      arr = HillClimbing();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
       writer.newLine();
-      writer.write("[]",0,2);      
-      writer.newLine();
+      writer.flush();
+      
       writer.write("[]",0,2);      
       writer.newLine();
       writer.write("[]",0,2);
@@ -424,6 +443,7 @@ public class pacman {
   
   public ArrayList<Character> getdirection(path somepath){
     ArrayList<Character> arr = new ArrayList();
+    arr.clear();
     coordinate temp = somepath.head;
     
     if(somepath.complete()){
@@ -452,10 +472,58 @@ public class pacman {
   }
 	
 	public ArrayList<Character> HillClimbing() {
-		return null;
-		// TODO Auto-generated method stub
-		
+    temp_coordinate = pacman_coordinate;
+    path = new path();
+		subHillClimbing(null);
+    System.out.println("HillClimbing the number of slots travelled: " + path.count);
+    return getdirection(path);
 	}
+  
+  public void subHillClimbing(coordinate parent){
+    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
+    path.add_to_path(temp);
+    
+    
+    temp_coordinate.y++;
+    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+        }
+      }
+    }
+    temp_coordinate.y--;    
+    temp_coordinate.y--;
+    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+        }
+      }
+    }
+    temp_coordinate.y++;
+    temp_coordinate.x--;
+    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+        }
+      }
+    }
+    temp_coordinate.x++;    
+    temp_coordinate.x++;
+    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+        }
+      }  
+    }
+  }
 	
 	public ArrayList<Character> SimulatedAnnealing() {
 		return null;
@@ -470,6 +538,7 @@ public class pacman {
 	}	
 
 	public ArrayList<Character> BestFS(){
+    temp_coordinate = pacman_coordinate;
     path = new path();
     coordinate temp;
     ArrayList<coordinate> set = new ArrayList();
@@ -526,6 +595,7 @@ public class pacman {
 	}
 
 	public ArrayList<Character> AStar() {
+    temp_coordinate = pacman_coordinate;
     path = new path();
     coordinate temp, tobeprocessed;
     ArrayList<coordinate> set = new ArrayList();
@@ -541,7 +611,7 @@ public class pacman {
       // la con, khong thuoc close, khong thuoc open, va van dang tiep tuc giai thuat
       if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
         if(notin(set, temp.x, temp.y+1)){
-          set.add(new coordinate(temp.x, temp.y + 1, temp, temp.g_weight + 1));
+          set.add(new coordinate(temp.x, temp.y + 1, temp, temp.g_weight + 1, "AStar"));
         }
         else{
           tobeprocessed = getfrom(set, temp.x, temp.y + 1);
@@ -554,7 +624,7 @@ public class pacman {
       }
       if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
         if(notin(set, temp.x, temp.y-1)){
-          set.add(new coordinate(temp.x, temp.y - 1, temp, temp.g_weight + 1));
+          set.add(new coordinate(temp.x, temp.y - 1, temp, temp.g_weight + 1, "AStar"));
         }
         else{
           tobeprocessed = getfrom(set, temp.x, temp.y - 1);
@@ -567,7 +637,7 @@ public class pacman {
       }
       if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
         if(notin(set, temp.x-1, temp.y)){
-          set.add(new coordinate(temp.x - 1, temp.y, temp, temp.g_weight + 1));
+          set.add(new coordinate(temp.x - 1, temp.y, temp, temp.g_weight + 1, "AStar"));
         }
         else{
           tobeprocessed = getfrom(set, temp.x - 1, temp.y);
@@ -580,7 +650,7 @@ public class pacman {
       } 
       if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
         if(notin(set, temp.x+1, temp.y)){
-          set.add(new coordinate(temp.x + 1, temp.y, temp, temp.g_weight + 1));
+          set.add(new coordinate(temp.x + 1, temp.y, temp, temp.g_weight + 1, "AStar"));
         }
         else{
           tobeprocessed = getfrom(set, temp.x + 1, temp.y);
@@ -605,6 +675,7 @@ public class pacman {
 	}
   
 	public ArrayList<Character> BFS() {//find best solution
+    temp_coordinate = pacman_coordinate;
     path = new path();
     
     ArrayList<coordinate> queue = new ArrayList();
@@ -640,6 +711,7 @@ public class pacman {
 	}
   
 	public ArrayList<Character> DFS() {//like backtracking
+    temp_coordinate = pacman_coordinate;
     path = new path();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
