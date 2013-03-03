@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 public class pacman {
 
   public char[][] maze;
+  public String[][] maze_path;
+
   public int row;
   public int column;
   public coordinate pacman_coordinate;
@@ -38,19 +40,10 @@ public class pacman {
     target_coordinate = new coordinate();
   }
 
-  private coordinate getfrom(ArrayList<coordinate> set, int x, int y) {
-    int n = set.size();
-    for(int i = 0; i < n; i++){
-      if(set.get(i).x == x && set.get(i).y == y){
-        return set.get(i);
-      }
-    }
-    return null;
-  }
-
   public class coordinate{
     public int x = 0;
     public int y = 0;
+    public int g_weight;
     public coordinate next;
     public coordinate parent;
     
@@ -63,6 +56,7 @@ public class pacman {
       x = x1;
       y = y1;
       next = null;
+      g_weight = 0;
     }
   
     public coordinate(int x1, int y1, coordinate parent1){
@@ -70,6 +64,14 @@ public class pacman {
       y = y1;
       next = null;
       parent = parent1;
+      g_weight = 0;
+    }
+    public coordinate(int x1, int y1, coordinate parent1, int g){
+      x = x1;
+      y = y1;
+      next = null;
+      parent = parent1;
+      g_weight = g;
     }
   }
   
@@ -197,7 +199,9 @@ public class pacman {
     System.out.println(m);
     System.out.println(n);
 
-    maze = new char[m][n];
+    maze = new char[m][n];    
+    maze_path = new String[m][n];
+
     
     try {
       reader.close();
@@ -230,6 +234,7 @@ public class pacman {
       for(int j = 0; j < m; j++) {
         if(str.charAt(j) == '%' || str.charAt(j) == ' ' || str.charAt(j) == 'P' || str.charAt(j) == '*') {
           maze[j][i] = str.charAt(j);
+          maze_path[j][i] = String.valueOf(str.charAt(j));
           System.out.print(maze[j][i]);
         }
         
@@ -268,7 +273,8 @@ public class pacman {
       arr = BestFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
       writer.newLine();
-      writer.write("[]",0,2);      
+      arr = AStar();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
       writer.newLine();
       writer.write("[]",0,2);      
       writer.newLine();
@@ -289,13 +295,48 @@ public class pacman {
   
   public path gettruepath(path path) {
     path truepath = new path();
-    
+    coordinate temp;
     if(path.tail.x == target_coordinate.x  && path.tail.y == target_coordinate.y){
-      coordinate temp = path.tail;
+      temp = path.tail;
       while(temp != null){
         truepath.add_to_path_reverse(temp.x, temp.y);
         temp = temp.parent;
       }
+    }
+    
+    int i = 0;
+    temp = path.head;
+    String[][] maze_path_temp = new String[column][row];
+
+    for(int k = row-1; k >= 0; k--){
+      for(int j = 0; j < column; j++) {
+        maze_path_temp[j][k] = maze_path[j][k];
+      }
+    }
+    
+    while(temp!=null){
+      maze_path_temp[temp.x][temp.y] = String.valueOf(i);
+      i++;
+      temp = temp.next;
+    }
+    
+    for(int k = row-1; k >= 0; k--){
+      for(int j = 0; j < column; j++) {
+        switch(maze_path_temp[j][k].length()){
+          case 1:
+            System.out.print("  " +maze_path_temp[j][k] + " ");
+            break;
+          case 2:
+            System.out.print(" " +maze_path_temp[j][k] + " ");
+            break;
+          case 3:
+            System.out.print(maze_path_temp[j][k] + " ");
+            break;
+          default:
+            break;
+        }
+      }
+      System.out.println();
     }
     
     return truepath;
@@ -333,24 +374,52 @@ public class pacman {
   
   public int getbestcoordinate(ArrayList<coordinate> arr){                      // fix here
     int k = 0;
-    int d;
+    int d, i;
     int min = -1;
-    int i;
     int n = arr.size();
     if(n>0){
       for(i = 0; i < n; i++){
         d = mahattan_distance(arr.get(i), target_coordinate); 
-        if(d < min || min == -1){                             // khac biet!!!, lay phan tu sau, moi nhat
+        if(d < min || min == -1){                                               // khac biet!!!, lay phan tu sau, moi nhat
           min = d;
           k = i;
         }
       }
-//      System.out.println("slot (" + arr.get(k).x + "," + arr.get(k).y + ") has weight: " + min);
       return k;
     }
     else{
       return -1;
     }
+  }
+  
+  public int getASTARcoordinate(ArrayList<coordinate> arr) {
+    int k = 0;
+    int h, i;
+    int min = -1;
+    int n = arr.size();
+    if(n>0){
+      for(i = 0; i < n; i++){
+        h = mahattan_distance(arr.get(i), target_coordinate) + arr.get(i).g_weight;
+        if(h < min || min == -1){                             // khac biet!!!, lay phan tu sau, moi nhat
+          min = h;
+          k = i;
+        }
+      }
+      return k;
+    }
+    else{
+      return -1;
+    }
+  }
+
+  public coordinate getfrom(ArrayList<coordinate> set, int x, int y) {
+    int n = set.size();
+    for(int i = 0; i < n; i++){
+      if(set.get(i).x == x && set.get(i).y == y){
+        return set.get(i);
+      }
+    }
+    return null;
   }
   
   public ArrayList<Character> getdirection(path somepath){
@@ -411,10 +480,6 @@ public class pacman {
       temp = set.get(i);
       set.remove(i);
       
-      if(temp.x == 4 && temp.y == 4){
-        int asd =123;  // trong set !!!!
-      }
-      
       if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
         if(notin(set, temp.x, temp.y+1)){
           set.add(new coordinate(temp.x, temp.y + 1, temp));
@@ -449,7 +514,6 @@ public class pacman {
       }
 
       path.add_to_path(temp);
-      System.out.println("(" + temp.x + ", " + temp.y + ")");
       
       if(set.isEmpty() || path.complete()){
         break;
@@ -462,9 +526,82 @@ public class pacman {
 	}
 
 	public ArrayList<Character> AStar() {
-		return null;
-		// TODO Auto-generated method stub
+    path = new path();
+    coordinate temp, tobeprocessed;
+    ArrayList<coordinate> set = new ArrayList();
+    set.add(new coordinate(temp_coordinate.x, temp_coordinate.y));
+    
+    while(true){
+      int i = getASTARcoordinate(set);
+      temp = set.get(i);
+      set.remove(i);
+      
+//      System.out.println("(" + temp.x + ", " + temp.y + ") has parent "  + "(" + ( temp.parent == null ? "" : temp.parent.x) + ", " + (temp.parent == null ? "" : temp.parent.y) + ")");
+      
+      // la con, khong thuoc close, khong thuoc open, va van dang tiep tuc giai thuat
+      if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
+        if(notin(set, temp.x, temp.y+1)){
+          set.add(new coordinate(temp.x, temp.y + 1, temp, temp.g_weight + 1));
+        }
+        else{
+          tobeprocessed = getfrom(set, temp.x, temp.y + 1);
+          if(tobeprocessed.g_weight < temp.g_weight + 1){
+            tobeprocessed.parent = temp;
+            tobeprocessed.g_weight = temp.g_weight + 1;
+            System.out.println("(" + temp.x + ", " + (temp.y + 1) + ") updated");
+          }
+        }
+      }
+      if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
+        if(notin(set, temp.x, temp.y-1)){
+          set.add(new coordinate(temp.x, temp.y - 1, temp, temp.g_weight + 1));
+        }
+        else{
+          tobeprocessed = getfrom(set, temp.x, temp.y - 1);
+          if(tobeprocessed.g_weight < temp.g_weight + 1){
+            tobeprocessed.parent = temp;
+            tobeprocessed.g_weight = temp.g_weight + 1;
+            System.out.println("(" + temp.x + ", " + (temp.y - 1)  +") updated");
+          }
+        }
+      }
+      if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
+        if(notin(set, temp.x-1, temp.y)){
+          set.add(new coordinate(temp.x - 1, temp.y, temp, temp.g_weight + 1));
+        }
+        else{
+          tobeprocessed = getfrom(set, temp.x - 1, temp.y);
+          if(tobeprocessed.g_weight < temp.g_weight + 1){
+            tobeprocessed.parent = temp;
+            tobeprocessed.g_weight = temp.g_weight + 1;
+            System.out.println("(" + (temp.x - 1) + ", " + temp.y  +") updated");
+          }
+        }
+      } 
+      if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
+        if(notin(set, temp.x+1, temp.y)){
+          set.add(new coordinate(temp.x + 1, temp.y, temp, temp.g_weight + 1));
+        }
+        else{
+          tobeprocessed = getfrom(set, temp.x + 1, temp.y);
+          if(tobeprocessed.g_weight < temp.g_weight + 1){
+            tobeprocessed.parent = temp;
+            tobeprocessed.g_weight = temp.g_weight + 1;
+            System.out.println("(" + (temp.x + 1) + ", " + temp.y  +") updated");
+          }
+        }
+      }
 
+      path.add_to_path(temp);
+      
+      if(set.isEmpty() || path.complete()){
+        break;
+      }
+    }
+    System.out.println("ASTAR the number of slots travelled: " + path.count);
+    
+    path true_path = gettruepath(path);
+    return getdirection(true_path);
 	}
   
 	public ArrayList<Character> BFS() {//find best solution
@@ -504,7 +641,6 @@ public class pacman {
   
 	public ArrayList<Character> DFS() {//like backtracking
     path = new path();
-    ArrayList<Character> arr = new ArrayList<>();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
     path truepath = gettruepath(path);
@@ -542,7 +678,7 @@ public class pacman {
 		 */
 		pacman pacman = new pacman();
 		pacman.readInput();
-//
+    
 		pacman.generateOutput();
 			
 	}
