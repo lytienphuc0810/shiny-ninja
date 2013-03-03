@@ -272,25 +272,25 @@ public class pacman {
       f = new FileWriter("path.txt");
       writer = new BufferedWriter(f);
       
-      arr = DFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
-      writer.newLine();
-      writer.flush();
-      
-      arr = BFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
-      writer.newLine();
-      writer.flush();
-      
-      arr = BestFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
-      writer.newLine();
-      writer.flush();
-
-      arr = AStar();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
-      writer.newLine();    
-      writer.flush();
+//      arr = DFS();
+//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+//      writer.newLine();
+//      writer.flush();
+//      
+//      arr = BFS();
+//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+//      writer.newLine();
+//      writer.flush();
+//      
+//      arr = BestFS();
+//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
+//      writer.newLine();
+//      writer.flush();
+//
+//      arr = AStar();
+//      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
+//      writer.newLine();    
+//      writer.flush();
 
       arr = HillClimbing();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
@@ -482,46 +482,61 @@ public class pacman {
   public void subHillClimbing(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
     path.add_to_path(temp);
+    System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
-    
-    temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+    boolean distress = false;
+    boolean stop = false;
+
+    while(!stop){
+      if(distress){
+        stop = true;
+      }
+      temp_coordinate.y++;
+      if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
+          subHillClimbing(temp);
+          if(!path.complete()){
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+          }
         }
       }
-    }
-    temp_coordinate.y--;    
-    temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+      temp_coordinate.y--;    
+      temp_coordinate.y--;
+      if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
+          subHillClimbing(temp);
+          if(!path.complete()){
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+          }
         }
       }
-    }
-    temp_coordinate.y++;
-    temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+      temp_coordinate.y++;
+      temp_coordinate.x--;
+      if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
+          subHillClimbing(temp);
+          if(!path.complete()){
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+          }
         }
       }
-    }
-    temp_coordinate.x++;    
-    temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
-        }
-      }  
+      temp_coordinate.x++;    
+      temp_coordinate.x++;
+      if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
+          subHillClimbing(temp);
+          if(!path.complete()){
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+          }
+        }  
+      }
+      temp_coordinate.x--;
+      if(!path.complete()){
+        distress = true;
+      }
+      else{
+        stop = true;
+      }
     }
   }
 	
