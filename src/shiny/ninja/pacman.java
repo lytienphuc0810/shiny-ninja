@@ -602,10 +602,6 @@ public class pacman {
     path.add_to_path(temp);
     System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
-    if(temp.x == 2 && temp.y == 5){
-      int a = 2;
-    }
-    
     while(true){
       int i = steepestnearby();
 
