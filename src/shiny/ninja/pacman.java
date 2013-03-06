@@ -174,7 +174,7 @@ public class pacman {
     }
   }
   
-	public void readInput() {
+  public void readInput() {
     FileReader f = null;
     BufferedReader reader = null;
     try {
@@ -264,7 +264,7 @@ public class pacman {
     column = m;
   }
 
-	public void generateOutput() {
+  public void generateOutput() {
     ArrayList<Character> arr = null;
     FileWriter f = null;
     BufferedWriter writer = null;
@@ -297,8 +297,11 @@ public class pacman {
       writer.newLine();
       writer.flush();
       
-      writer.write("[]",0,2);      
+      arr = SteepestHillClimbing();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
       writer.newLine();
+      writer.flush();
+
       writer.write("[]",0,2);
       writer.flush();
       writer.close();
@@ -306,7 +309,7 @@ public class pacman {
     } catch (IOException ex) {
       Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
     }
-	}
+  }
 
   public boolean adjacent(coordinate slot1, coordinate slot2){
     return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
@@ -471,14 +474,14 @@ public class pacman {
     }
     return arr;
   }
-	
-	public ArrayList<Character> HillClimbing() {
-    temp_coordinate = pacman_coordinate;
+  
+  public ArrayList<Character> HillClimbing() {
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
-		subHillClimbing(null);
+    subHillClimbing(null);
     System.out.println("HillClimbing the number of slots travelled: " + path.count);
     return getdirection(path);
-	}
+  }
   
   public void subHillClimbing(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
@@ -497,7 +500,7 @@ public class pacman {
         if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
           subHillClimbing(temp);
           if(!path.complete()){
-            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
           }
         }
       }
@@ -507,7 +510,7 @@ public class pacman {
         if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
           subHillClimbing(temp);
           if(!path.complete()){
-            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
           }
         }
       }
@@ -517,7 +520,7 @@ public class pacman {
         if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
           subHillClimbing(temp);
           if(!path.complete()){
-            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
           }
         }
       }
@@ -527,7 +530,7 @@ public class pacman {
         if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight || distress){
           subHillClimbing(temp);
           if(!path.complete()){
-            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing"));
+            path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
           }
         }  
       }
@@ -540,20 +543,143 @@ public class pacman {
       }
     }
   }
-	
-	public ArrayList<Character> SimulatedAnnealing() {
-		return null;
-		// TODO Auto-generated method stub
-		
-	}
+  
+  public ArrayList<Character> SimulatedAnnealing() {
+    return null;
+    // TODO Auto-generated method stub
+    
+  }
 
-	public ArrayList<Character> SteepestHillClimbing() {
-		return null;
-		// TODO Auto-generated method stub
-		
-	}	
+  public ArrayList<Character> SteepestHillClimbing() {
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
+    path = new path();
+    subSteepestHillClimbing(null);
+    System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
+    return getdirection(path);
+  } 
 
-	public ArrayList<Character> BestFS(){
+  public int steepestnearby(){
+    int h_weight = mahattan_distance(temp_coordinate, target_coordinate);
+    int result = -1;
+
+    temp_coordinate.y++;
+    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        h_weight = mahattan_distance(temp_coordinate, target_coordinate);
+        result = 1;
+      }
+    }
+    temp_coordinate.y--;    
+    temp_coordinate.y--;
+    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        h_weight = mahattan_distance(temp_coordinate, target_coordinate);
+        result = 2;
+      }
+    }
+    temp_coordinate.y++;
+    temp_coordinate.x--;
+    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) <  h_weight ){
+        h_weight = mahattan_distance(temp_coordinate, target_coordinate);
+        result = 3;
+      }
+    }
+    temp_coordinate.x++;    
+    temp_coordinate.x++;
+    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        result = 4;
+      }  
+    }
+    temp_coordinate.x--;
+
+    return result;
+  }
+    
+  public void subSteepestHillClimbing(coordinate parent){
+    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
+    path.add_to_path(temp);
+    System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
+    
+    if(temp.x == 2 && temp.y == 5){
+      int a = 2;
+    }
+    
+    while(true){
+      int i = steepestnearby();
+
+      if(i == -1){
+        break;
+      }
+
+      switch(i){
+        case 1:
+          temp_coordinate.y++;
+          subSteepestHillClimbing(temp);
+          temp_coordinate.y--;
+          break;
+        case 2:
+          temp_coordinate.y--;
+          subSteepestHillClimbing(temp);
+          temp_coordinate.y++;
+          break;
+        case 3:
+          temp_coordinate.x--;
+          subSteepestHillClimbing(temp);
+          temp_coordinate.x++;
+          break;
+        case 4:
+          temp_coordinate.x++;
+          subSteepestHillClimbing(temp);
+          temp_coordinate.x--;
+          break;
+        default:
+          break;
+      }
+      if(!path.complete()){
+        path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+      }
+    }
+
+    if(!path.complete()){
+      temp_coordinate.y++;
+      if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        subSteepestHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      temp_coordinate.y--;    
+      temp_coordinate.y--;
+      if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        subSteepestHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      temp_coordinate.y++;
+      temp_coordinate.x--;
+      if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        subSteepestHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      temp_coordinate.x++;    
+      temp_coordinate.x++;
+      if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+        subSteepestHillClimbing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      temp_coordinate.x--;
+    }
+
+  }
+  
+  public ArrayList<Character> BestFS(){
     temp_coordinate = pacman_coordinate;
     path = new path();
     coordinate temp;
@@ -608,9 +734,9 @@ public class pacman {
     
     path true_path = gettruepath(path);
     return getdirection(true_path);
-	}
+  }
 
-	public ArrayList<Character> AStar() {
+  public ArrayList<Character> AStar() {
     temp_coordinate = pacman_coordinate;
     path = new path();
     coordinate temp, tobeprocessed;
@@ -622,7 +748,7 @@ public class pacman {
       temp = set.get(i);
       set.remove(i);
       
-//      System.out.println("(" + temp.x + ", " + temp.y + ") has parent "  + "(" + ( temp.parent == null ? "" : temp.parent.x) + ", " + (temp.parent == null ? "" : temp.parent.y) + ")");
+      // System.out.println("(" + temp.x + ", " + temp.y + ") has parent "  + "(" + ( temp.parent == null ? "" : temp.parent.x) + ", " + (temp.parent == null ? "" : temp.parent.y) + ")");
       
       // la con, khong thuoc close, khong thuoc open, va van dang tiep tuc giai thuat
       if(temp.y < row-1 && maze[temp.x][temp.y+1] != '%' && !path.contain(temp.x, temp.y+1) && !path.complete()){
@@ -688,9 +814,9 @@ public class pacman {
     
     path true_path = gettruepath(path);
     return getdirection(true_path);
-	}
+  }
   
-	public ArrayList<Character> BFS() {//find best solution
+  public ArrayList<Character> BFS() {//find best solution
     temp_coordinate = pacman_coordinate;
     path = new path();
     
@@ -724,15 +850,15 @@ public class pacman {
     path true_path = gettruepath(path);
     
     return getdirection(true_path);
-	}
+  }
   
-	public ArrayList<Character> DFS() {//like backtracking
+  public ArrayList<Character> DFS() {//like backtracking
     temp_coordinate = pacman_coordinate;
     path = new path();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
     return getdirection(gettruepath(path));
-	}
+  }
   
   public void subDFS(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent);
@@ -759,14 +885,14 @@ public class pacman {
     }
   }
 
-	public static void main(String[] args) {
-		/**
-		 * Modify this method if you want
-		 */
-		pacman pacman = new pacman();
-		pacman.readInput();
+  public static void main(String[] args) {
+    /**
+     * Modify this method if you want
+     */
+    pacman pacman = new pacman();
+    pacman.readInput();
     
-		pacman.generateOutput();
-			
-	}
+    pacman.generateOutput();
+      
+  }
 }
