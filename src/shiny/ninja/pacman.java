@@ -493,6 +493,7 @@ public class pacman {
     return arr;
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> HillClimbing() {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
@@ -550,11 +551,11 @@ public class pacman {
     temp_coordinate.x--;
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> SimulatedAnnealing() {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
     Random rand = new Random(40);
-    pp = rand.nextFloat();
     subSimulatedAnnealing(null);
     System.out.println("subSimulatedAnnealing the number of slots travelled: " + path.count);
    
@@ -562,16 +563,88 @@ public class pacman {
     return getdirection(path);
   }
 
-  public void anneal(coordinate temp){
-    if(Math.exp( (temp.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k) ) >= pp){
-      subHillClimbing(temp);
+  public void anneal(coordinate parent){
+    float fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
+    System.out.println(Math.exp(fl) + "   " + pp);
+    if(Math.exp(fl) >= pp){
+      subSimulatedAnnealing(parent);
       if(!path.complete()){
-        path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        path.add_to_path(new coordinate(parent.x, parent.y, path.tail, mahattan_distance(parent, target_coordinate), "HillClimbing"));
       }          
       T--;
     }
   }
-      
+
+  public void subSimulatedAnnealing(coordinate parent){
+    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
+    path.add_to_path(temp);
+    // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
+    
+    temp_coordinate.y++;
+    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subSimulatedAnnealing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      else{
+        anneal(temp);
+      }
+    }
+    temp_coordinate.y--;    
+    temp_coordinate.y--;
+    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subSimulatedAnnealing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      else{
+        anneal(temp);
+      }
+    }
+    temp_coordinate.y++;
+    temp_coordinate.x--;
+    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subSimulatedAnnealing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      else{
+        anneal(temp);
+      }
+    }
+    temp_coordinate.x++;    
+    temp_coordinate.x++;
+    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        subSimulatedAnnealing(temp);
+        if(!path.complete()){
+          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
+        }
+      }
+      else{
+        anneal(temp);
+      }
+    }
+    temp_coordinate.x--;
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  public ArrayList<Character> SteepestHillClimbing() {
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
+    path = new path();
+    subSteepestHillClimbing(null);
+    System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
+    
+    print_path(path);
+    return getdirection(path);
+  } 
+        
   public boolean secondchance(int h_weight){
     temp_coordinate.y++;
     if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
@@ -604,75 +677,7 @@ public class pacman {
     
     return false;
   } 
-  public void subSimulatedAnnealing(coordinate parent){
-    coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
-    path.add_to_path(temp);
-    // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
-    
-    temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
-      }
-      else{
-        anneal(temp);
-      }
-    }
-    temp_coordinate.y--;    
-    temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
-      }
-      else{
-        anneal(temp);
-      }
-    }
-    temp_coordinate.y++;
-    temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
-      }
-      else{
-        anneal(temp);
-      }
-    }
-    temp_coordinate.x++;    
-    temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
-        subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
-      }
-      else{
-        anneal(temp);
-      }
-    }
-    temp_coordinate.x--;
-  }
-
-  public ArrayList<Character> SteepestHillClimbing() {
-    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
-    path = new path();
-    subSteepestHillClimbing(null);
-    System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
-    
-    print_path(path);
-    return getdirection(path);
-  } 
-
+  
   public int steepestnearby(){
     int h_weight = mahattan_distance(temp_coordinate, target_coordinate);
     int result = -1;
@@ -834,6 +839,7 @@ public class pacman {
 
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> BestFS(){
     temp_coordinate = pacman_coordinate;
     path = new path();
@@ -890,7 +896,8 @@ public class pacman {
     print_path(path);
     return getdirection(gettruepath());
   }
-
+  
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> AStar() {
     temp_coordinate = pacman_coordinate;
     path = new path();
@@ -971,6 +978,7 @@ public class pacman {
     return getdirection(gettruepath());
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> BFS() {//find best solution
     temp_coordinate = pacman_coordinate;
     path = new path();
@@ -1007,6 +1015,7 @@ public class pacman {
     return getdirection(gettruepath());
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> DFS() {//like backtracking
     temp_coordinate = pacman_coordinate;
     path = new path();
@@ -1016,6 +1025,7 @@ public class pacman {
     return getdirection(gettruepath());
   }
   
+  //////////////////////////////////////////////////////////////////////////////
   public void subDFS(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent);
     path.add_to_path(temp);
@@ -1041,6 +1051,7 @@ public class pacman {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////
   public static void main(String[] args) {
     /**
      * Modify this method if you want
