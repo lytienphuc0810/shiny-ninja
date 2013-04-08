@@ -332,7 +332,7 @@ public class pacman {
   }
   
   // di tu target len, chi lay 1 duong di den dich, bo qua cac duong cut
-  public path gettruepath(path path) {
+  public path gettruepath() {
     path truepath = new path();
     coordinate temp;
     if(path.tail.x == target_coordinate.x  && path.tail.y == target_coordinate.y){
@@ -343,8 +343,12 @@ public class pacman {
       }
     }
     
+    return truepath;
+  }
+  
+  public void print_path(path in_path){
     int i = 0;
-    temp = path.head;
+    coordinate temp = in_path.head;
     String[][] maze_path_temp = new String[column][row];
 
     for(int k = row-1; k >= 0; k--){
@@ -358,7 +362,7 @@ public class pacman {
       i++;
       temp = temp.next;
     }
-    
+    // in ra maze va duong di
     for(int k = row-1; k >= 0; k--){
       for(int j = 0; j < column; j++) {
         switch(maze_path_temp[j][k].length()){
@@ -377,8 +381,6 @@ public class pacman {
       }
       System.out.println();
     }
-    
-    return truepath;
   }
 
   public boolean notin(ArrayList<coordinate> arr, int x, int y) {
@@ -496,13 +498,15 @@ public class pacman {
     path = new path();
     subHillClimbing(null);
     System.out.println("HillClimbing the number of slots travelled: " + path.count);
+
+    print_path(path);
     return getdirection(path);
   }
   
   public void subHillClimbing(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
     path.add_to_path(temp);
-    System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
+    // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
     temp_coordinate.y++;
     if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
@@ -553,6 +557,8 @@ public class pacman {
     pp = rand.nextFloat();
     subSimulatedAnnealing(null);
     System.out.println("subSimulatedAnnealing the number of slots travelled: " + path.count);
+   
+    print_path(path);
     return getdirection(path);
   }
 
@@ -565,12 +571,43 @@ public class pacman {
       T--;
     }
   }
-  
-  //distress la tam bay?
+      
+  public boolean secondchance(int h_weight){
+    temp_coordinate.y++;
+    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        return true;
+      }
+    }
+    temp_coordinate.y--;    
+    temp_coordinate.y--;
+    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        return true;
+      }
+    }
+    temp_coordinate.y++;
+    temp_coordinate.x--;
+    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) <  h_weight ){
+        return true;
+      }
+    }
+    temp_coordinate.x++;    
+    temp_coordinate.x++;
+    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
+        return true;
+      }  
+    }
+    temp_coordinate.x--;
+    
+    return false;
+  } 
   public void subSimulatedAnnealing(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
     path.add_to_path(temp);
-    System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
+    // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
     temp_coordinate.y++;
     if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
@@ -631,6 +668,8 @@ public class pacman {
     path = new path();
     subSteepestHillClimbing(null);
     System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
+    
+    print_path(path);
     return getdirection(path);
   } 
 
@@ -672,44 +711,11 @@ public class pacman {
 
     return result;
   }
-    
-  public boolean secondchance(int h_weight){
-    temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }
-    }
-    temp_coordinate.y--;    
-    temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }
-    }
-    temp_coordinate.y++;
-    temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) <  h_weight ){
-        return true;
-      }
-    }
-    temp_coordinate.x++;    
-    temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }  
-    }
-    temp_coordinate.x--;
-    
-    return false;
-  } 
   
   public void subSteepestHillClimbing(coordinate parent){
     coordinate temp = new coordinate(temp_coordinate.x, temp_coordinate.y, parent, mahattan_distance(temp_coordinate, target_coordinate), "HillClimbing");
     path.add_to_path(temp);
-    System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
+    // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
     while(true){
       int i = steepestnearby();
@@ -881,8 +887,8 @@ public class pacman {
     }
     System.out.println("BestFS the number of slots travelled: " + path.count);
     
-    path true_path = gettruepath(path);
-    return getdirection(true_path);
+    print_path(path);
+    return getdirection(gettruepath());
   }
 
   public ArrayList<Character> AStar() {
@@ -961,8 +967,8 @@ public class pacman {
     }
     System.out.println("ASTAR the number of slots travelled: " + path.count);
     
-    path true_path = gettruepath(path);
-    return getdirection(true_path);
+    print_path(path);
+    return getdirection(gettruepath());
   }
   
   public ArrayList<Character> BFS() {//find best solution
@@ -996,9 +1002,9 @@ public class pacman {
       }
     }
     System.out.println("BFS the number of slots travelled: " + path.count);
-    path true_path = gettruepath(path);
     
-    return getdirection(true_path);
+    print_path(path);
+    return getdirection(gettruepath());
   }
   
   public ArrayList<Character> DFS() {//like backtracking
@@ -1006,7 +1012,8 @@ public class pacman {
     path = new path();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
-    return getdirection(gettruepath(path));
+    print_path(path);
+    return getdirection(gettruepath());
   }
   
   public void subDFS(coordinate parent){
