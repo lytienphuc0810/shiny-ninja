@@ -277,38 +277,49 @@ public class pacman {
       f = new FileWriter("path.txt");
       writer = new BufferedWriter(f);
       // myoutput
+      // 1
       arr = DFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
       writer.flush();
       
+      // 2
       arr = BFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
       writer.newLine();
       writer.flush();
       
+      // 3
       arr = BestFS();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
       writer.newLine();
       writer.flush();
 
+      // 4
       arr = AStar();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
       writer.newLine();    
       writer.flush();
 
+      // 5
       arr = HillClimbing();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
       writer.newLine();
       writer.flush();
       
+      // 6
       arr = SteepestHillClimbing();
       writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
       writer.newLine();
       writer.flush();
 
-      writer.write("[]",0,2);
+      // 7
+      arr = SimulatedAnnealing();
+      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
       writer.flush();
+      
+      // newline at the end of file?
+      
       writer.close();
       f.close();
     } catch (IOException ex) {
@@ -546,7 +557,7 @@ public class pacman {
   }
 
   public void anneal(coordinate temp){
-    if(Math.pow(e, (temp.h_weight - mahattan_distance(temp_coordinate, target_coordinate))/(T*k)) >= pp){
+    if(Math.exp( (temp.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k) ) >= pp){
       subHillClimbing(temp);
       if(!path.complete()){
         path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
