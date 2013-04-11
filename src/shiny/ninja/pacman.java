@@ -560,8 +560,8 @@ public class pacman {
   public void anneal(coordinate parent){
     float fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
     System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
+    T--;
     if(Math.exp(fl) >= pp){
-      T--;
       subSimulatedAnnealing(parent);
     }
   }
