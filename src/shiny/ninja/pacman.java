@@ -509,43 +509,37 @@ public class pacman {
     path.add_to_path(temp);
     // System.out.println("(" + temp.x + ", " + temp.y + ") has heuristic "  + temp.h_weight);
     
+    boolean chosen = false;
+    
     temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+    if(!chosen && temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
         subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
       }
     }
     temp_coordinate.y--;    
     temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+    if(!chosen && temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
         subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
       }
     }
     temp_coordinate.y++;
     temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+    if(!chosen && temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
         subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
       }
     }
     temp_coordinate.x++;    
     temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+    if(!chosen && temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
+      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
         subHillClimbing(temp);
-        if(!path.complete()){
-          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-        }
       }  
     }
     temp_coordinate.x--;

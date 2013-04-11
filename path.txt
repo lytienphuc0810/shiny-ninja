@@ -2,6 +2,6 @@
 [l,l,l,l,l,u,u,l,l]
 [l,l,l,l,l,u,u,l,l]
 [l,l,l,l,l,u,u,l,l]
-[l,l,u,u,l,r,d,d,l,l,l,u,u,l,l]
+[]
 [l,l,u,u,l,r,d,d,l,l,l,u,u,l,l]
 [l,l,u,u,l,r,r,r,r,d,d,r,r,r,u,u,l,l,r,r,r,l,d,d,r,r,r,u,u,r,r,d,d,d,d,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,u,u,u,u,l,l,d,d,l,l,l,l,l,l,u,u,l,l,l,d,d,l,l,l,u,u,l,l]
