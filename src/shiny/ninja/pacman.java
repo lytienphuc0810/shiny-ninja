@@ -801,44 +801,6 @@ public class pacman {
       }  
     }
     temp_coordinate.x--;
- 
-    // het duong thi chet 
-//    // chon dai 1 huong de di tiep
-//    if(!path.complete()){
-//      temp_coordinate.y++;
-//      if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-//        subSteepestHillClimbing(temp);
-//        if(!path.complete()){
-//          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-//        }
-//      }
-//      temp_coordinate.y--;    
-//      temp_coordinate.y--;
-//      if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-//        subSteepestHillClimbing(temp);
-//        if(!path.complete()){
-//          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-//        }
-//      }
-//      temp_coordinate.y++;
-//      temp_coordinate.x--;
-//      if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-//        subSteepestHillClimbing(temp);
-//        if(!path.complete()){
-//          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-//        }
-//      }
-//      temp_coordinate.x++;    
-//      temp_coordinate.x++;
-//      if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-//        subSteepestHillClimbing(temp);
-//        if(!path.complete()){
-//          path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
-//        }
-//      }
-//      temp_coordinate.x--;
-//    }
-
   }
   
   //////////////////////////////////////////////////////////////////////////////
@@ -1024,7 +986,7 @@ public class pacman {
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
     print_path(path);
-    return getdirection(gettruepath());
+    return getdirection(path);
   }
   
   //////////////////////////////////////////////////////////////////////////////
@@ -1034,22 +996,34 @@ public class pacman {
     if(temp_coordinate.y < row-1 && maze[temp_coordinate.x][temp_coordinate.y+1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y+1) && !path.complete()){
       temp_coordinate.y++;
       subDFS(temp);
-      temp_coordinate.y--; 
+      temp_coordinate.y--;
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y, path.tail);
+      }
     }
     if(temp_coordinate.y > 0 && maze[temp_coordinate.x][temp_coordinate.y-1] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y-1) && !path.complete()){
       temp_coordinate.y--;
       subDFS(temp);
       temp_coordinate.y++;
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y, path.tail);
+      }
     }
     if(temp_coordinate.x > 0 && maze[temp_coordinate.x-1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x-1, temp_coordinate.y) && !path.complete()){
       temp_coordinate.x--;
       subDFS(temp);
       temp_coordinate.x++;
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y, path.tail);
+      }
     }
     if(temp_coordinate.x < column-1 && maze[temp_coordinate.x+1][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x+1, temp_coordinate.y) && !path.complete()){
       temp_coordinate.x++;
       subDFS(temp);     
       temp_coordinate.x--;
+      if(!path.complete()){
+        path.add_to_path(temp.x, temp.y, path.tail);
+      }
     }
   }
 
