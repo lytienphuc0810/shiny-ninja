@@ -34,10 +34,10 @@ public class pacman {
   public coordinate temp_coordinate;
   public coordinate target_coordinate;
   public path path;
-  public int T = 1000;
-  public float pp;
-  public float e = 1;
-  public int k = 1;
+  public double T = 0.0001;
+  public double pp;
+  public double e = 1;
+  public double k = 3.6;
   
   public pacman(){
     pacman_coordinate = new coordinate();
@@ -558,9 +558,12 @@ public class pacman {
   }
 
   public void anneal(coordinate parent){
-    float fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
+    double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
     System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
-    T--;
+    T-=0.0001;
+    if(T <= 0.0001){
+      T = 0.0001;
+    }
     if(Math.exp(fl) >= pp){
       subSimulatedAnnealing(parent);
     }
