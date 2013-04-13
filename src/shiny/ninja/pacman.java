@@ -557,7 +557,7 @@ public class pacman {
     return getdirection(path);
   }
 
-  public void anneal(coordinate parent){
+  public boolean anneal(coordinate parent){
     double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
     System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
     T-=0.0001;
@@ -566,6 +566,10 @@ public class pacman {
     }
     if(Math.exp(fl) >= pp){
       subSimulatedAnnealing(parent);
+      return true;
+    }
+    else{
+      return false;
     }
   }
 
@@ -578,34 +582,34 @@ public class pacman {
     
     temp_coordinate.y++;
     if(!chosen && temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subSimulatedAnnealing(temp);
       }
       else{
-        anneal(temp);
+        chosen = anneal(temp);
       }
     }
     temp_coordinate.y--;    
     temp_coordinate.y--;
     if(!chosen && temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subSimulatedAnnealing(temp);
       }
       else{
-        anneal(temp);
+        chosen = anneal(temp);
       }
     }
     temp_coordinate.y++;
     temp_coordinate.x--;
     if(!chosen && temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subSimulatedAnnealing(temp);
       }
       else{
-        anneal(temp);
+        chosen = anneal(temp);
       }
     }
     temp_coordinate.x++;    
