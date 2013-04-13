@@ -2,6 +2,6 @@
 [d,l,l,l,l,l]
 [d,l,l,l,l,l]
 [d,l,l,l,l,l]
-[]
+[d,l,l,l,l,l]
 [d,l,l,l,l,l]
 [d,l,l,l,l,l]

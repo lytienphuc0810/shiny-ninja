@@ -513,24 +513,24 @@ public class pacman {
     
     temp_coordinate.y++;
     if(!chosen && temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subHillClimbing(temp);
       }
     }
     temp_coordinate.y--;    
     temp_coordinate.y--;
     if(!chosen && temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subHillClimbing(temp);
       }
     }
     temp_coordinate.y++;
     temp_coordinate.x--;
     if(!chosen && temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      chosen = true;
       if(mahattan_distance(temp_coordinate, target_coordinate) < temp.h_weight){
+        chosen = true;
         subHillClimbing(temp);
       }
     }
