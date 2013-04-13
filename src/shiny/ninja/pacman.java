@@ -806,32 +806,20 @@ public class pacman {
         if(notin(set, temp.x, temp.y+1)){
           set.add(new coordinate(temp.x, temp.y + 1, temp));
         }
-        else{
-          getfrom(set, temp.x, temp.y + 1).parent = temp;
-        }
       }
       if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
         if(notin(set, temp.x, temp.y-1)){
           set.add(new coordinate(temp.x, temp.y - 1, temp));
-        }
-        else{
-          getfrom(set, temp.x, temp.y - 1).parent = temp;
         }
       }
       if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
         if(notin(set, temp.x-1, temp.y)){
           set.add(new coordinate(temp.x - 1, temp.y, temp));
         }
-        else{
-          getfrom(set, temp.x - 1, temp.y).parent = temp;
-        }
       } 
       if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
         if(notin(set, temp.x+1, temp.y)){
           set.add(new coordinate(temp.x + 1, temp.y, temp));
-        }
-        else{
-          getfrom(set, temp.x + 1, temp.y).parent = temp;
         }
       }
 
