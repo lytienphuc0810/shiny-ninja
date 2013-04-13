@@ -839,7 +839,7 @@ public class pacman {
   public ArrayList<Character> AStar() {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
-    coordinate temp, tobeprocessed;
+    coordinate temp;
     ArrayList<coordinate> set = new ArrayList();
     set.add(new coordinate(temp_coordinate.x, temp_coordinate.y));
     
@@ -855,52 +855,20 @@ public class pacman {
         if(notin(set, temp.x, temp.y+1)){
           set.add(new coordinate(temp.x, temp.y + 1, temp, temp.g_weight + 1, "AStar"));
         }
-        else{
-          tobeprocessed = getfrom(set, temp.x, temp.y + 1);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + temp.x + ", " + (temp.y + 1) + ") updated");
-          }
-        }
       }
       if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
         if(notin(set, temp.x, temp.y-1)){
           set.add(new coordinate(temp.x, temp.y - 1, temp, temp.g_weight + 1, "AStar"));
-        }
-        else{
-          tobeprocessed = getfrom(set, temp.x, temp.y - 1);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + temp.x + ", " + (temp.y - 1)  +") updated");
-          }
         }
       }
       if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
         if(notin(set, temp.x-1, temp.y)){
           set.add(new coordinate(temp.x - 1, temp.y, temp, temp.g_weight + 1, "AStar"));
         }
-        else{
-          tobeprocessed = getfrom(set, temp.x - 1, temp.y);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + (temp.x - 1) + ", " + temp.y  +") updated");
-          }
-        }
       } 
       if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
         if(notin(set, temp.x+1, temp.y)){
           set.add(new coordinate(temp.x + 1, temp.y, temp, temp.g_weight + 1, "AStar"));
-        }
-        else{
-          tobeprocessed = getfrom(set, temp.x + 1, temp.y);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + (temp.x + 1) + ", " + temp.y  +") updated");
-          }
         }
       }
 
