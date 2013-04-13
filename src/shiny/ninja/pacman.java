@@ -791,7 +791,7 @@ public class pacman {
   
   //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> BestFS(){
-    temp_coordinate = pacman_coordinate;
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
     coordinate temp;
     ArrayList<coordinate> set = new ArrayList();
@@ -849,7 +849,7 @@ public class pacman {
   
   //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> AStar() {
-    temp_coordinate = pacman_coordinate;
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
     coordinate temp, tobeprocessed;
     ArrayList<coordinate> set = new ArrayList();
@@ -930,7 +930,7 @@ public class pacman {
   
   //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> BFS() {//find best solution
-    temp_coordinate = pacman_coordinate;
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
     
     ArrayList<coordinate> queue = new ArrayList();
@@ -967,7 +967,7 @@ public class pacman {
   
   //////////////////////////////////////////////////////////////////////////////
   public ArrayList<Character> DFS() {//like backtracking
-    temp_coordinate = pacman_coordinate;
+    temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
     subDFS(null);
     System.out.println("DFS the number of slots travelled: " + path.count);
