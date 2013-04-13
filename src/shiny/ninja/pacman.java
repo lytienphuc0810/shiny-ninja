@@ -636,39 +636,6 @@ public class pacman {
     return getdirection(path);
   } 
         
-  public boolean secondchance(int h_weight){
-    temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }
-    }
-    temp_coordinate.y--;    
-    temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }
-    }
-    temp_coordinate.y++;
-    temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) <  h_weight ){
-        return true;
-      }
-    }
-    temp_coordinate.x++;    
-    temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) < h_weight){
-        return true;
-      }  
-    }
-    temp_coordinate.x--;
-    
-    return false;
-  } 
-  
   public int steepestnearby(){
     int h_weight = mahattan_distance(temp_coordinate, target_coordinate);
     int result = -1;
@@ -748,49 +715,6 @@ public class pacman {
         path.add_to_path(new coordinate(temp.x, temp.y, path.tail, mahattan_distance(temp, target_coordinate), "HillClimbing"));
       }
     }
-
-    // chon 1 node xung quanh co heuristic lon hon nhung ke can 1 node co heuristic nho hon de di tiep
-    int h_weight = mahattan_distance(temp_coordinate, target_coordinate);
-    temp_coordinate.y++;
-    if(temp_coordinate.y <= row-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) >= h_weight){
-        if(secondchance(h_weight)){
-          System.out.println("SECONDCHANCE1");
-          subSteepestHillClimbing(temp);
-        }
-      }
-    }
-    temp_coordinate.y--;    
-    temp_coordinate.y--;
-    if(temp_coordinate.y >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) >= h_weight){
-        if(secondchance(h_weight)){
-          System.out.println("SECONDCHANCE2");
-          subSteepestHillClimbing(temp);
-        }
-      }
-    }
-    temp_coordinate.y++;
-    temp_coordinate.x--;
-    if(temp_coordinate.x >= 0 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) >=  h_weight ){
-        if(secondchance(h_weight)){
-          System.out.println("SECONDCHANCE3");
-          subSteepestHillClimbing(temp);
-        }
-      }
-    }
-    temp_coordinate.x++;    
-    temp_coordinate.x++;
-    if(temp_coordinate.x <= column-1 && maze[temp_coordinate.x][temp_coordinate.y] != '%' && !path.contain(temp_coordinate.x, temp_coordinate.y) && !path.complete()){
-      if(mahattan_distance(temp_coordinate, target_coordinate) >= h_weight){
-        if(secondchance(h_weight)){
-          System.out.println("SECONDCHANCE4");
-          subSteepestHillClimbing(temp);
-        }
-      }  
-    }
-    temp_coordinate.x--;
   }
   
   //////////////////////////////////////////////////////////////////////////////
