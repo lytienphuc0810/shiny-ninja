@@ -280,43 +280,43 @@ public class pacman {
       // myoutput
       // 1
       arr = DFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+      writer.write(arr.toString());
       writer.newLine();
       writer.flush();
       
       // 2
       arr = BFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());
+      writer.write(arr.toString());
       writer.newLine();
       writer.flush();
       
       // 3
       arr = BestFS();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());   
+      writer.write(arr.toString());   
       writer.newLine();
       writer.flush();
 
       // 4
       arr = AStar();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());      
+      writer.write(arr.toString());      
       writer.newLine();    
       writer.flush();
 
       // 5
       arr = HillClimbing();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
+      writer.write(arr.toString());       
       writer.newLine();
       writer.flush();
       
       // 6
       arr = SteepestHillClimbing();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
+      writer.write(arr.toString());       
       writer.newLine();
       writer.flush();
 
       // 7
       arr = SimulatedAnnealing();
-      writer.write(arr.toString().replace(" ", ""), 0, arr.toString().replace(" ", "").length());       
+      writer.write(arr.toString());       
       writer.flush();
       
       // newline at the end of file?
