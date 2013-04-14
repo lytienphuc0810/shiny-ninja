@@ -201,15 +201,15 @@ public class pacman {
         if(test.length() > n){
           m = test.length();              // so cot, x
         }
-        System.out.println(test);
+//        System.out.println(test);
         n++;                              // so hang, y
       } catch (IOException ex) {
         Logger.getLogger(pacman.class.getName()).log(Level.SEVERE, null, ex);
       }
     }
     
-    System.out.println(m);
-    System.out.println(n);
+//    System.out.println(m);
+//    System.out.println(n);
 
     maze = new char[m][n];    
     maze_path = new String[m][n];
@@ -247,7 +247,7 @@ public class pacman {
         if(str.charAt(j) == '%' || str.charAt(j) == ' ' || str.charAt(j) == 'P' || str.charAt(j) == '*') {
           maze[j][i] = str.charAt(j);
           maze_path[j][i] = String.valueOf(str.charAt(j));
-          System.out.print(maze[j][i]);
+//          System.out.print(maze[j][i]);
         }
         
         if(str.charAt(j) == 'P'){
@@ -262,7 +262,7 @@ public class pacman {
           target_coordinate.y = i;
         }
       }
-      System.out.println();
+//      System.out.println();
     }
     
     row = n;
@@ -370,19 +370,19 @@ public class pacman {
       for(int j = 0; j < column; j++) {
         switch(maze_path_temp[j][k].length()){
           case 1:
-            System.out.print("  " +maze_path_temp[j][k] + " ");
+//            System.out.print("  " +maze_path_temp[j][k] + " ");
             break;
           case 2:
-            System.out.print(" " +maze_path_temp[j][k] + " ");
+//            System.out.print(" " +maze_path_temp[j][k] + " ");
             break;
           case 3:
-            System.out.print(maze_path_temp[j][k] + " ");
+//            System.out.print(maze_path_temp[j][k] + " ");
             break;
           default:
             break;
         }
       }
-      System.out.println();
+//      System.out.println();
     }
   }
 
@@ -501,7 +501,7 @@ public class pacman {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
     subHillClimbing(null);
-    System.out.println("HillClimbing the number of slots travelled: " + path.count);
+//    System.out.println("HillClimbing the number of slots travelled: " + path.count);
 
     print_path(path);
     return getdirection(path);
@@ -554,7 +554,7 @@ public class pacman {
     Random rand = new Random(40);
     pp = rand.nextFloat();
     subSimulatedAnnealing(null);
-    System.out.println("subSimulatedAnnealing the number of slots travelled: " + path.count);
+//    System.out.println("subSimulatedAnnealing the number of slots travelled: " + path.count);
    
     print_path(path);
     return getdirection(path);
@@ -562,7 +562,7 @@ public class pacman {
 
   public boolean anneal(coordinate parent){
     double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);  // phai la so am, parent te hon temp, h lon hon
-    System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
+//    System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
     T-=0.0001;
     if(T <= 0.0001){
       T = 0.0001;
@@ -633,7 +633,7 @@ public class pacman {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
     subSteepestHillClimbing(null);
-    System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
+//    System.out.println("SteepestHillClimbing the number of slots travelled: " + path.count);
     
     print_path(path);
     return getdirection(path);
@@ -760,7 +760,7 @@ public class pacman {
         break;
       }
     }
-    System.out.println("BestFS the number of slots travelled: " + path.count);
+//    System.out.println("BestFS the number of slots travelled: " + path.count);
     
     print_path(path);
     return getdirection(gettruepath());
@@ -772,7 +772,7 @@ public class pacman {
     if(tobeprocessed.parent.g_weight > temp.g_weight){
       tobeprocessed.parent = temp;
       tobeprocessed.g_weight = temp.g_weight + 1;
-      System.out.println("(" + x + ", " + y + ") updated");
+//      System.out.println("(" + x + ", " + y + ") updated");
     }
   }
   
@@ -830,7 +830,7 @@ public class pacman {
         break;
       }
     }
-    System.out.println("ASTAR the number of slots travelled: " + path.count);
+//    System.out.println("ASTAR the number of slots travelled: " + path.count);
     
     print_path(path);
     return getdirection(gettruepath());
@@ -867,7 +867,7 @@ public class pacman {
         break;
       }
     }
-    System.out.println("BFS the number of slots travelled: " + path.count);
+//    System.out.println("BFS the number of slots travelled: " + path.count);
     
     print_path(path);
     return getdirection(gettruepath());
@@ -878,7 +878,7 @@ public class pacman {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
     subDFS(null);
-    System.out.println("DFS the number of slots travelled: " + path.count);
+//    System.out.println("DFS the number of slots travelled: " + path.count);
     print_path(path);
     return getdirection(path);
   }
