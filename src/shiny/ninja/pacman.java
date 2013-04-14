@@ -37,7 +37,8 @@ public class pacman {
   public double T = 0.1;
   public double pp;
   public double k = 3.6;
-  
+  public Random rand = new Random(40);
+
   public pacman(){
     pacman_coordinate = new coordinate();
     temp_coordinate   = new coordinate();
@@ -551,8 +552,6 @@ public class pacman {
   public ArrayList<Character> SimulatedAnnealing() {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y, null, mahattan_distance(pacman_coordinate, target_coordinate), "HillClimbing");
     path = new path();
-    Random rand = new Random(40);
-    pp = rand.nextFloat();
     subSimulatedAnnealing(null);
 //    System.out.println("subSimulatedAnnealing the number of slots travelled: " + path.count);
    
@@ -561,6 +560,7 @@ public class pacman {
   }
 
   public boolean anneal(coordinate parent){
+    pp = rand.nextFloat();
     double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);  // phai la so am, parent te hon temp, h lon hon
 //    System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
     T-=0.0001;
