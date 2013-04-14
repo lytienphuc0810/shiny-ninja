@@ -84,8 +84,9 @@ public class pacman {
         h_weight = n;
       }
     }
+    
+
   }
-  
   public class path{
     public coordinate head;
     public coordinate tail;
@@ -330,6 +331,9 @@ public class pacman {
     return (Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) < 2 && Math.abs(slot1.x - slot2.x) + Math.abs(slot1.y - slot2.y) > 0);
   }
   
+  public int AstarHG(coordinate coord){
+      return (coord.g_weight);
+  }
   // di tu target len, chi lay 1 duong di den dich, bo qua cac duong cut
   public path gettruepath() {
     path truepath = new path();
@@ -763,10 +767,19 @@ public class pacman {
   }
   
   //////////////////////////////////////////////////////////////////////////////
+  public void update_parent_Astar(ArrayList<coordinate> set, coordinate temp, int x, int y){
+    coordinate tobeprocessed = getfrom(set, x, y);
+    if(tobeprocessed.parent.g_weight > temp.g_weight){
+      tobeprocessed.parent = temp;
+      tobeprocessed.g_weight = temp.g_weight + 1;
+      System.out.println("(" + x + ", " + y + ") updated");
+    }
+  }
+  
   public ArrayList<Character> AStar() {
     temp_coordinate = new coordinate(pacman_coordinate.x, pacman_coordinate.y);
     path = new path();
-    coordinate temp, tobeprocessed;
+    coordinate temp;
     ArrayList<coordinate> set = new ArrayList();
     set.add(new coordinate(temp_coordinate.x, temp_coordinate.y));
     
@@ -783,12 +796,7 @@ public class pacman {
           set.add(new coordinate(temp.x, temp.y + 1, temp, temp.g_weight + 1, "AStar"));
         }
         else{
-          tobeprocessed = getfrom(set, temp.x, temp.y + 1);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + temp.x + ", " + (temp.y + 1) + ") updated");
-          }
+          this.update_parent_Astar(set, temp, temp.x, temp.y + 1);
         }
       }
       if(temp.y > 0 && maze[temp.x][temp.y-1] != '%' && !path.contain(temp.x, temp.y-1) && !path.complete()){
@@ -796,12 +804,7 @@ public class pacman {
           set.add(new coordinate(temp.x, temp.y - 1, temp, temp.g_weight + 1, "AStar"));
         }
         else{
-          tobeprocessed = getfrom(set, temp.x, temp.y - 1);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + temp.x + ", " + (temp.y - 1)  +") updated");
-          }
+          this.update_parent_Astar(set, temp,temp.x, temp.y - 1);
         }
       }
       if(temp.x > 0 && maze[temp.x-1][temp.y] != '%' && !path.contain(temp.x-1, temp.y) && !path.complete()){
@@ -809,12 +812,7 @@ public class pacman {
           set.add(new coordinate(temp.x - 1, temp.y, temp, temp.g_weight + 1, "AStar"));
         }
         else{
-          tobeprocessed = getfrom(set, temp.x - 1, temp.y);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + (temp.x - 1) + ", " + temp.y  +") updated");
-          }
+          this.update_parent_Astar(set, temp, temp.x - 1, temp.y);
         }
       } 
       if(temp.x < column-1 && maze[temp.x+1][temp.y] != '%' && !path.contain(temp.x+1, temp.y) && !path.complete()){
@@ -822,17 +820,12 @@ public class pacman {
           set.add(new coordinate(temp.x + 1, temp.y, temp, temp.g_weight + 1, "AStar"));
         }
         else{
-          tobeprocessed = getfrom(set, temp.x + 1, temp.y);
-          if(tobeprocessed.g_weight < temp.g_weight + 1){
-            tobeprocessed.parent = temp;
-            tobeprocessed.g_weight = temp.g_weight + 1;
-            System.out.println("(" + (temp.x + 1) + ", " + temp.y  +") updated");
-          }
+          this.update_parent_Astar(set, temp, temp.x + 1, temp.y);
         }
       }
-
-      path.add_to_path(temp);
       
+      path.add_to_path(temp);
+
       if(set.isEmpty() || path.complete()){
         break;
       }
