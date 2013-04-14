@@ -34,9 +34,8 @@ public class pacman {
   public coordinate temp_coordinate;
   public coordinate target_coordinate;
   public path path;
-  public double T = 0.0001;
+  public double T = 0.1;
   public double pp;
-  public double e = 1;
   public double k = 3.6;
   
   public pacman(){
@@ -558,7 +557,7 @@ public class pacman {
   }
 
   public boolean anneal(coordinate parent){
-    double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);
+    double fl = (float)(parent.h_weight - mahattan_distance(temp_coordinate, target_coordinate)) / (T*k);  // phai la so am, parent te hon temp, h lon hon
     System.out.println(fl + "    " + Math.exp(fl) + "   " + pp);
     T-=0.0001;
     if(T <= 0.0001){
